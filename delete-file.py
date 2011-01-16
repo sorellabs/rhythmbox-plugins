@@ -22,10 +22,10 @@ def can_remove(filename):
     return call(cmd) == 0
 
 
-def notify(text, icon=None):
+def notify(summary, text, icon=None):
     """Notifies the user through libnotify
     """
-    cmd = ["notify-send", text]
+    cmd = ["notify-send", summary, text]
     if icon is not None:
         cmd.extend(["-i", icon])
 
@@ -44,7 +44,7 @@ def main():
     if can_remove(filename):
         player.next()
         call(["rm", filename])
-        notify("Removed \"" + filename + "\"", icon="user-trash-full")
+        notify("Removed", "\"" + filename + "\"", icon="user-trash-full")
 
 
 # calls the main routine
