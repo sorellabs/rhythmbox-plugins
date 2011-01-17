@@ -1,18 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#
+# Copyright (c) 2010 Quildreen Motta
+# Released under the MIT licence
+
+"""Deletes the current file being played in Rhythmbox.
+"""
 
 import os
+import sys
 import dbus
-import urllib
+import argparse
 
 from subprocess import call
+from utils      import sanitize, notify
 
-
-def sanitize(uri):
-    """Sanitizes the given URI to a local filename
-    """
-    return urllib.unquote(uri).replace("file://", "")
-    
 
 def can_remove(filename):
     """Asks the user whether the given filename should be removed.
@@ -22,17 +24,14 @@ def can_remove(filename):
     return call(cmd) == 0
 
 
-def notify(summary, text, icon=None):
-    """Notifies the user through libnotify
-    """
-    cmd = ["notify-send", summary, text]
-    if icon is not None:
-        cmd.extend(["-i", icon])
-
-    call(cmd)
+def parse_arguments():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args()
 
 
 def main():
+    parse_arguments()
+
     # Gets the Rhythmbox player from DBus
     bus = dbus.SessionBus()
     obj = bus.get_object("org.gnome.Rhythmbox", "/org/gnome/Rhythmbox/Player")
