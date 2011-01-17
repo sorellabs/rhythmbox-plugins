@@ -8,20 +8,11 @@
 """
 
 import os
-import sys
 import dbus
 import argparse
 
 from subprocess import call
-from utils      import sanitize, notify
-
-
-def can_remove(filename):
-    """Asks the user whether the given filename should be removed.
-    """
-    cmd = ["zenity", "--question", "--title", "Delete this file?"
-          ,"--text", filename]
-    return call(cmd) == 0
+from utils      import sanitize, notify, confirm
 
 
 def parse_arguments():
@@ -40,7 +31,7 @@ def main():
     filename = sanitize(player.getPlayingUri())
 
     # Prompts user for confirmation on removing the file
-    if can_remove(filename):
+    if confirm(filename, title="Delete this file?"):
         player.next()
         call(["rm", filename])
         notify("Removed", "\"" + filename + "\"", icon="user-trash-full")

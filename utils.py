@@ -25,3 +25,15 @@ def notify(summary, text, icon=None):
         cmd.extend(["-i", icon])
 
     call(cmd)
+
+
+def confirm(prompt, title=None):
+    """Prompts the user for confirmation.
+    """
+    cmd = ["zenity", "--question", "--text=%s" % (prompt,)]
+    if title is not None:
+        cmd.extend(["--title", title])
+
+    return call(cmd) == 0
+
+
