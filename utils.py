@@ -8,7 +8,7 @@
 
 import urllib
 
-from subprocess import call
+from subprocess import call, Popen, PIPE
 
 
 def sanitize(uri):
@@ -35,5 +35,18 @@ def confirm(prompt, title=None):
         cmd.extend(["--title", title])
 
     return call(cmd) == 0
+
+
+def entry(prompt, default="", password=False):
+    """Prompts the user to enter some information on a textbox.
+    """
+    cmd = ["zenity", "--entry", "--text=%s" % (prompt,)
+          ,"--entry-text=%s" % (default,)]
+    if password:
+        cmd.append("--hide-text")
+    
+    proc = Popen(cmd, stdout=PIPE)
+    proc.wait()
+    return proc.communicate()[0].strip()
 
 
