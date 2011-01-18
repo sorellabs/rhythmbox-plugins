@@ -32,7 +32,7 @@ def confirm(prompt, title=None):
     """
     cmd = ["zenity", "--question", "--text=%s" % (prompt,)]
     if title is not None:
-        cmd.append("--title=%s", (title,))
+        cmd.append("--title=%s" % (title,))
 
     return call(cmd) == 0
 
