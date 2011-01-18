@@ -65,7 +65,8 @@ def create(name=None):
     if not name:
         name = entry("Playlist name:")
         
-    rb.createPlaylist(name)
+    if name:
+        rb.createPlaylist(name)
     
 
 # -----------------------------------------------------------------------------
