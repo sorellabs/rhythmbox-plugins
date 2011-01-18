@@ -32,21 +32,60 @@ def confirm(prompt, title=None):
     """
     cmd = ["zenity", "--question", "--text=%s" % (prompt,)]
     if title is not None:
-        cmd.extend(["--title", title])
+        cmd.append("--title=%s", (title,))
 
     return call(cmd) == 0
 
 
-def entry(prompt, default="", password=False):
+def entry(prompt, default="", password=False, title=None):
     """Prompts the user to enter some information on a textbox.
     """
     cmd = ["zenity", "--entry", "--text=%s" % (prompt,)
           ,"--entry-text=%s" % (default,)]
     if password:
         cmd.append("--hide-text")
-    
+    if title is not None:
+        cmd.append("--title=%s" % (title,))
+
     proc = Popen(cmd, stdout=PIPE)
     proc.wait()
     return proc.communicate()[0].strip()
 
 
+def get_list(columns, *args, **kwargs):
+    """Prompts the user to select values in a list.
+    """
+    title    = kwargs.pop("title", None)
+    text     = kwargs.pop("text", None)
+    multiple = kwargs.pop("multiple", False)
+    kind     = kwargs.pop("kind", None)
+
+    cmd = ["zenity", "--list", "--separator=\\n"]
+
+    if text is not None:
+        cmd.append("--text=%s" % (text,))
+    if title is not None:
+        cmd.append("--title=%s" % (title,))
+    if multiple:
+        cmd.append("--multiple")
+
+    if kind == "--checklist":
+        cmd.append("--checklist")
+    if kind == "--radiolist":
+        cmd.append("--radiolist")
+
+
+    for column in columns:
+        cmd.append("--column=%s" % (column,))
+
+    for data in args:
+        cmd.extend(data)
+
+    proc = Popen(cmd, stdout=PIPE)
+    proc.wait()
+    output = proc.communicate()[0]
+    
+    if output is not None:
+        return output.strip().splitlines()
+        
+    return []
