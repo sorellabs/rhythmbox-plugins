@@ -7,12 +7,10 @@ Allows the current file being played in Rhythmbox to be added or removed from
 any of the playlists available. Also allows to create new playlists.
 """
 
-import os
 import dbus
 import argparse
 
-from subprocess  import call, Popen, PIPE
-from utils       import *
+from utils import entry, get_list
 
 
 ###############################################################################
@@ -29,9 +27,7 @@ player = dbus.Interface(player, "org.gnome.Rhythmbox.Player")
 
 ###############################################################################
 # Functions
-def parse_arguments():
-    parser = argparse.ArgumentParser(description=__doc__)
-
+def add_arguments(parser):
     parser.add_argument("--create"
                        ,type    = str
                        ,nargs   = "?"
@@ -52,8 +48,6 @@ def parse_arguments():
                        ,default = None
                        ,metavar = "PLAYLISTS"
                        ,help="Removes current song from PLAYLISTS")
-
-    return parser.parse_args()
 
 
 # -----------------------------------------------------------------------------
@@ -101,7 +95,11 @@ def remove(playlists):
 
 # -----------------------------------------------------------------------------
 def main():
-    args = parse_arguments()
+    raw_formatter = argparse.RawDescriptionHelpFormatter
+    parser        = argparse.ArgumentParser(description     = __doc__
+                                           ,formatter_class = raw_formatter)
+    add_arguments(parser)
+    args = parser.parse_args()
 
     if args.create is not None:
         create(args.create)
@@ -113,7 +111,7 @@ def main():
         remove(args.remove)
 
     else:
-        print "buu"
+        parser.print_help()
 
 
 if __name__ == "__main__":
